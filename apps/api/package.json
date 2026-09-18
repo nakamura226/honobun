@@ -12,8 +12,14 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@ai-sdk/anthropic": "^1.2.0",
+    "@ai-sdk/google": "^1.2.0",
+    "@ai-sdk/openai": "^1.3.0",
     "@hono/node-server": "^2.1.1",
-    "hono": "^4.13.8"
+    "@hono/zod-validator": "^0.4.0",
+    "ai": "^4.3.0",
+    "hono": "^4.13.8",
+    "zod": "^3.24.0"
   },
   "devDependencies": {
     "@honobun/config": "workspace:*",
