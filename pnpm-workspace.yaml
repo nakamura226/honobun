@@ -1,0 +1,11 @@
+packages:
+  - "apps/*"
+  - "packages/*"
+
+onlyBuiltDependencies:
+  - esbuild
+
+allowBuilds:
+  sharp: false
+  unrs-resolver: false
+  esbuild: true
