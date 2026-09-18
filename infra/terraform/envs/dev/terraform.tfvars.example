@@ -1,0 +1,15 @@
+project_id = "your-gcp-project-id"
+region     = "asia-northeast1"
+
+# 初回applyの前にArtifact Registryへ何らかのイメージをpushしておくか、
+# 一旦公開のプレースホルダイメージ(例: gcr.io/cloudrun/hello)を指定して後からデプロイし直す
+api_image = "asia-northeast1-docker.pkg.dev/your-gcp-project-id/honobun/api:latest"
+web_image = "asia-northeast1-docker.pkg.dev/your-gcp-project-id/honobun/web:latest"
+
+db_tier                 = "db-f1-micro"
+db_deletion_protection  = false
+
+# 使用するプロバイダーのAPIキーのみ設定すればOK（Secret Managerに保存される）
+anthropic_api_key            = ""
+openai_api_key                = ""
+google_generative_ai_api_key = ""
