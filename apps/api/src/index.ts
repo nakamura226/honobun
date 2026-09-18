@@ -1,17 +1,6 @@
 import { serve } from '@hono/node-server'
-import { Hono } from 'hono'
 
-const app = new Hono()
-
-app.get('/', (c) => {
-  return c.text('Hello Hono!')
-})
-
-app.get('/health', (c) => {
-  return c.json({ status: 'ok' })
-})
-
-export type AppType = typeof app
+import app from './app.js'
 
 const port = Number(process.env.PORT ?? 3000)
 
