@@ -1,0 +1,27 @@
+{
+  "name": "@honobun/db",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "scripts": {
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
+    "db:push": "drizzle-kit push",
+    "db:studio": "drizzle-kit studio",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "drizzle-orm": "^0.44.0",
+    "pg": "^8.13.0"
+  },
+  "devDependencies": {
+    "@honobun/config": "workspace:*",
+    "@types/pg": "^8.11.0",
+    "drizzle-kit": "^0.31.0",
+    "eslint": "^9.19.0",
+    "typescript": "^5.7.3"
+  }
+}

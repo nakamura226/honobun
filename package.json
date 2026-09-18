@@ -8,9 +8,13 @@
   "scripts": {
     "dev:web": "pnpm --filter @honobun/web dev",
     "dev:api": "pnpm --filter @honobun/api dev",
-    "build": "pnpm -r build",
-    "lint": "pnpm -r lint",
-    "typecheck": "pnpm -r typecheck",
-    "test": "pnpm -r test"
+    "db:generate": "pnpm --filter @honobun/db db:generate",
+    "db:migrate": "pnpm --filter @honobun/db db:migrate",
+    "db:push": "pnpm --filter @honobun/db db:push",
+    "db:studio": "pnpm --filter @honobun/db db:studio",
+    "build": "pnpm -r --if-present build",
+    "lint": "pnpm -r --if-present lint",
+    "typecheck": "pnpm -r --if-present typecheck",
+    "test": "pnpm -r --if-present test"
   }
 }
