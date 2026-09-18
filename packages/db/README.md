@@ -4,9 +4,10 @@ Drizzle ORM によるスキーマ定義・マイグレーション管理（Postg
 
 ## セットアップ
 
-`DATABASE_URL` を環境変数として設定してください（ルートの `.env.example` 参照）。
+```bash
+cp .env.example .env
+# 必要に応じて DATABASE_URL を編集(drizzle-kitがこのディレクトリの.envを自動読み込みする)
 
-```
 # ローカル開発用 Postgres の例
 docker run --rm -d --name honobun-db \
   -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=honobun \
@@ -23,5 +24,5 @@ docker run --rm -d --name honobun-db \
 ## Cloud SQL 接続について
 
 - ローカル/Cloud Run 双方とも `pg`(node-postgres) 経由の `DATABASE_URL` で接続する
-- Cloud Run からは Cloud SQL Auth Proxy のUnixソケット (`/cloudsql/PROJECT:REGION:INSTANCE`) を想定
-- Cloud SQL Auth Proxy vs Cloud SQL Node.js Connector のどちらを採用するかは未確定（`CLAUDE.md` 7章）
+- Cloud Run からは組み込みのCloud SQLコネクタ (Unixソケット `/cloudsql/PROJECT:REGION:INSTANCE`) を使用する（`infra/terraform` 参照）
+- 本番相当のCloud SQL接続方式(プライベートIP化など)は未確定（`CLAUDE.md` 7章）
