@@ -58,9 +58,21 @@ pnpm dev:api   # http://localhost:3000
 pnpm dev:web   # http://localhost:3001
 ```
 
-`apps/web` のトップページで `apps/api` の `/health` への型安全なRPC疎通を確認できる。
-LLMチャットは `POST /api/chat`(`apps/api`)に `{ provider, messages }` を送るとストリーミングで応答する
-(利用するプロバイダーのAPIキーを `apps/api/.env` に設定していること)。
+`apps/web` (http://localhost:3001) はチャットUI(会話一覧・メッセージ送信・画像添付)そのもの。
+画像はGCSへ署名付きURL経由で直接アップロードされ、過去の履歴表示時も署名付きURLで取得する
+(`apps/api` に `GCS_BUCKET_NAME` の設定と、実GCPまたはローカルエミュレータへの認証情報が必要)。
+LLM応答は利用するプロバイダーのAPIキーを `apps/api/.env` に設定していないとエラーになる
+(画像はLLMへの入力には使わず、保存・表示のみに利用する)。
+
+ローカルで画像アップロードまで試す場合は [fake-gcs-server](https://github.com/fsouza/fake-gcs-server) が使える。
+
+```bash
+docker run --rm -d --name honobun-gcs -p 4443:4443 \
+  fsouza/fake-gcs-server -scheme http -public-host localhost:4443
+curl -s -X POST "http://localhost:4443/storage/v1/b?project=honobun-dev" \
+  -H "Content-Type: application/json" -d '{"name":"honobun-dev-assets"}'
+# apps/api/.env に GCS_API_ENDPOINT=http://localhost:4443 を設定
+```
 
 ## スクリプト
 
@@ -74,17 +86,19 @@ LLMチャットは `POST /api/chat`(`apps/api`)に `{ provider, messages }` を�
 
 | 変数名 | 設定先 | 説明 |
 |---|---|---|
+| `DATABASE_URL` | `apps/api/.env` / `packages/db/.env` | **必須。** PostgreSQL接続文字列 (両方に同じ値を設定する)。未設定だとapiが起動時に落ちる |
+| `GCS_BUCKET_NAME` | `apps/api/.env` | **必須。** 画像アップロード先のGCSバケット名。未設定だとapiが起動時に落ちる |
 | `PORT` | `apps/api/.env` | apiのlistenポート (既定 3000) |
 | `WEB_ORIGIN` | `apps/api/.env` | CORS許可オリジン (既定 `http://localhost:3001`) |
-| `ANTHROPIC_API_KEY` | `apps/api/.env` | Anthropic利用時のみ必須 |
-| `OPENAI_API_KEY` | `apps/api/.env` | OpenAI利用時のみ必須 |
-| `GOOGLE_GENERATIVE_AI_API_KEY` | `apps/api/.env` | Gemini利用時のみ必須 |
+| `ANTHROPIC_API_KEY` | `apps/api/.env` | Anthropic利用時のみ必須 (未設定でも起動はする) |
+| `OPENAI_API_KEY` | `apps/api/.env` | OpenAI利用時のみ必須 (未設定でも起動はする) |
+| `GOOGLE_GENERATIVE_AI_API_KEY` | `apps/api/.env` | Gemini利用時のみ必須 (未設定でも起動はする) |
+| `GCS_API_ENDPOINT` | `apps/api/.env` | ローカルでfake-gcs-server等のエミュレータを使う場合のみ設定 |
 | `NEXT_PUBLIC_API_URL` | `apps/web/.env.local` | RPCクライアントの接続先 (既定 `http://localhost:3000`、apiのデフォルトポートと一致していれば省略可) |
-| `DATABASE_URL` | `packages/db/.env` | PostgreSQL接続文字列 |
 
-いずれもローカル開発時は各ファイルが存在しなくても既定値で動作する(DB/LLM機能を使わない場合)。
-`apps/api` は Node.jsの `--env-file-if-exists` で `.env` を読み込むため、ファイルが無くても
-(Cloud Run等で環境変数が直接注入される場合でも)エラーにならない。
+`DATABASE_URL` と `GCS_BUCKET_NAME` は `apps/api` の起動そのものに必要(チャット履歴・画像アップロード機能の中核のため)。
+それ以外は未設定でも起動でき、`apps/api` は Node.jsの `--env-file-if-exists` で `.env` を読み込むため、
+ファイルが無くても(Cloud Run等で環境変数が直接注入される場合でも)読み込み自体はエラーにならない。
 
 ## Docker
 

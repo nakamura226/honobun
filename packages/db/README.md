@@ -14,6 +14,12 @@ docker run --rm -d --name honobun-db \
   -p 5432:5432 postgres:16-alpine
 ```
 
+## スキーマ
+
+- `conversations` - チャットの会話単位
+- `messages` - 各会話内のメッセージ(role: system/user/assistant)
+- `attachments` - メッセージに添付された画像(GCSオブジェクトキーを保持。表示時にapi側で署名付きURLへ変換する)
+
 ## コマンド
 
 - `pnpm db:generate` - `src/schema.ts` からマイグレーションSQLを生成

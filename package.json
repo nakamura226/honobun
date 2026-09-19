@@ -7,7 +7,7 @@
   },
   "scripts": {
     "dev:web": "pnpm --filter @honobun/web dev",
-    "dev:api": "pnpm --filter @honobun/api dev",
+    "dev:api": "pnpm --filter @honobun/db build && pnpm --filter @honobun/api dev",
     "db:generate": "pnpm --filter @honobun/db db:generate",
     "db:migrate": "pnpm --filter @honobun/db db:migrate",
     "db:push": "pnpm --filter @honobun/db db:push",

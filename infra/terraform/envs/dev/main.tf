@@ -126,6 +126,19 @@ resource "google_secret_manager_secret_iam_member" "api_llm_keys" {
   member    = "serviceAccount:${google_service_account.api.email}"
 }
 
+# Cloud Run上で(サービスアカウントキーなしに)署名付きURLを発行するために必要
+resource "google_service_account_iam_member" "api_token_creator" {
+  service_account_id = google_service_account.api.name
+  role               = "roles/iam.serviceAccountTokenCreator"
+  member             = "serviceAccount:${google_service_account.api.email}"
+}
+
+resource "google_storage_bucket_iam_member" "api_assets_bucket" {
+  bucket = module.assets_bucket.name
+  role   = "roles/storage.objectAdmin"
+  member = "serviceAccount:${google_service_account.api.email}"
+}
+
 # --- Cloud Run ---
 
 module "api" {
@@ -143,6 +156,7 @@ module "api" {
     { name = "PORT", value = "8080" },
     # 個人利用・認証なしのdev環境のため、CORSは全オリジン許可とする
     { name = "WEB_ORIGIN", value = "*" },
+    { name = "GCS_BUCKET_NAME", value = module.assets_bucket.name },
   ]
 
   secret_env_vars = [

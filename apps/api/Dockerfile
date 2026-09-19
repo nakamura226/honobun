@@ -10,6 +10,7 @@ WORKDIR /app
 FROM base AS build
 COPY . .
 RUN pnpm install --frozen-lockfile
+RUN pnpm --filter @honobun/db build
 RUN pnpm --filter @honobun/api build
 RUN pnpm --filter @honobun/api deploy --prod /prod/api
 

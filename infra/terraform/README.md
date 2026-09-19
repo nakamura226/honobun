@@ -43,6 +43,9 @@ terraform apply
   dev環境ではapi側のCORS許可オリジンを `*` (全許可) としている。
   個人利用・認証機能なしの想定のためリスクは限定的だが、
   ユーザーを跨ぐ認証情報を扱うようになった場合は要見直し。
+- **画像アップロード(GCS)**: apiサービスアカウントに `roles/iam.serviceAccountTokenCreator`(自分自身に対して)を付与し、
+  サービスアカウントキーを発行せずに署名付きURL(アップロード/ダウンロード)を発行できるようにしている。
+  加えて `roles/storage.objectAdmin` をassetsバケットに対して付与する。
 - **state管理**: 初期構築時はローカルstate。チーム開発へ拡張する際は
   `envs/dev/versions.tf` のGCSバックエンド設定を有効化する。
 - **環境拡張**: staging/prodは `envs/dev` と同様の構成を
