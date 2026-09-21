@@ -8,6 +8,8 @@ RUN npm install -g pnpm@12.4.2
 WORKDIR /app
 
 FROM base AS build
+ARG NEXT_PUBLIC_API_URL
+ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
 COPY . .
 RUN pnpm install --frozen-lockfile
 RUN pnpm --filter @honobun/web build
