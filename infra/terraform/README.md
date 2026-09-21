@@ -37,7 +37,7 @@ terraform apply
 
 - **Cloud SQL接続方式**: Cloud SQL Auth Proxyをサイドカーとして自前で動かすのではなく、
   Cloud Run v2組み込みのCloud SQLコネクタ(`volumes { cloud_sql_instance {...} }`)を使用する。
-  Cloud SQLインスタンスは公開IPを持たない(`ipv4_enabled = false`)。
+  dev環境ではCloud SQLのPublic IPを有効にし、Cloud Runコネクタ経由で接続する。
   接続文字列はSecret Manager経由で `DATABASE_URL` としてapiコンテナに注入する。
 - **CORS**: web→apiの相互URL参照によるTerraformの循環依存を避けるため、
   dev環境ではapi側のCORS許可オリジンを `*` (全許可) としている。

@@ -8,8 +8,8 @@ resource "google_storage_bucket" "this" {
 
   cors {
     origin          = var.cors_origins
-    method          = ["GET", "HEAD"]
-    response_header = ["*"]
+    method          = ["GET", "HEAD", "PUT"]
+    response_header = ["Content-Type", "Content-Length", "ETag"]
     max_age_seconds = 3600
   }
 }
