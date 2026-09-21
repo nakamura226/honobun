@@ -149,22 +149,22 @@ module "api" {
   name                  = local.api_name
   image                 = var.api_image
   port                  = 8080
+  allow_unauthenticated = var.public_access
   service_account_email = google_service_account.api.email
   cloud_sql_instances   = [module.db.connection_name]
 
   env_vars = [
-    { name = "PORT", value = "8080" },
     # 個人利用・認証なしのdev環境のため、CORSは全オリジン許可とする
     { name = "WEB_ORIGIN", value = "*" },
     { name = "GCS_BUCKET_NAME", value = module.assets_bucket.name },
   ]
 
-  secret_env_vars = [
-    { name = "DATABASE_URL", secret_id = google_secret_manager_secret.database_url.secret_id },
-    { name = "ANTHROPIC_API_KEY", secret_id = google_secret_manager_secret.llm_keys["anthropic-api-key"].secret_id },
-    { name = "OPENAI_API_KEY", secret_id = google_secret_manager_secret.llm_keys["openai-api-key"].secret_id },
-    { name = "GOOGLE_GENERATIVE_AI_API_KEY", secret_id = google_secret_manager_secret.llm_keys["google-generative-ai-api-key"].secret_id },
-  ]
+  secret_env_vars = concat(
+    [{ name = "DATABASE_URL", secret_id = google_secret_manager_secret.database_url.secret_id }],
+    var.anthropic_api_key != "" ? [{ name = "ANTHROPIC_API_KEY", secret_id = google_secret_manager_secret.llm_keys["anthropic-api-key"].secret_id }] : [],
+    var.openai_api_key != "" ? [{ name = "OPENAI_API_KEY", secret_id = google_secret_manager_secret.llm_keys["openai-api-key"].secret_id }] : [],
+    var.google_generative_ai_api_key != "" ? [{ name = "GOOGLE_GENERATIVE_AI_API_KEY", secret_id = google_secret_manager_secret.llm_keys["google-generative-ai-api-key"].secret_id }] : [],
+  )
 
   depends_on = [google_project_service.apis]
 }
@@ -172,11 +172,12 @@ module "api" {
 module "web" {
   source = "../../modules/cloud_run"
 
-  project_id = var.project_id
-  region     = var.region
-  name       = local.web_name
-  image      = var.web_image
-  port       = 3000
+  project_id            = var.project_id
+  region                = var.region
+  name                  = local.web_name
+  image                 = var.web_image
+  port                  = 3000
+  allow_unauthenticated = var.public_access
 
   env_vars = [
     { name = "NEXT_PUBLIC_API_URL", value = module.api.uri },

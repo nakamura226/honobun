@@ -18,6 +18,12 @@ variable "web_image" {
   description = "apps/web のコンテナイメージ (Artifact Registryのパス)"
 }
 
+variable "public_access" {
+  type        = bool
+  default     = false
+  description = "Cloud RunのWeb/APIを未認証で公開するか"
+}
+
 variable "db_tier" {
   type    = string
   default = "db-f1-micro"

@@ -6,12 +6,13 @@ resource "google_sql_database_instance" "this" {
 
   settings {
     tier              = var.tier
+    edition           = var.edition
     availability_type = "ZONAL"
     disk_autoresize   = true
 
-    # 公開IPを持たせず、Cloud Run組み込みのCloud SQLコネクタ(Cloud SQL Admin API経由)でのみ接続する
+    # Cloud Run組み込みのCloud SQLコネクタ経由で接続するため、Public IPを有効にする
     ip_configuration {
-      ipv4_enabled = false
+      ipv4_enabled = true
     }
 
     backup_configuration {

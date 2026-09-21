@@ -15,6 +15,12 @@ variable "database_version" {
   default = "POSTGRES_16"
 }
 
+variable "edition" {
+  type        = string
+  default     = "ENTERPRISE"
+  description = "Cloud SQL edition; Enterprise supports the low-cost development tiers"
+}
+
 variable "tier" {
   type        = string
   default     = "db-f1-micro"
